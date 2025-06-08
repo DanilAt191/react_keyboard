@@ -1,23 +1,37 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-export const App: React.FC = () => {
-  const [symbol, setSybol] = useState<string | null>(null);
+interface AppState {
+  symbol: string | null;
+}
 
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => setSybol(event.key);
+export class App extends React.Component<{}, AppState> {
+  state: AppState = {
+    symbol: null,
+  };
 
-    document.addEventListener('keyup', handleKeyPress);
+  componentDidMount() {
+    document.addEventListener('keyup', this.handleKeyPress);
+  }
 
-    return () => document.removeEventListener('keyup', handleKeyPress);
-  }, [symbol]);
+  componentWillUnmount() {
+    document.removeEventListener('keyup', this.handleKeyPress);
+  }
 
-  return (
-    <div className="App">
-      <p className="App__message">
-        {symbol === null
-          ? 'Nothing was pressed yet'
-          : `The last pressed key is [${symbol}]`}
-      </p>
-    </div>
-  );
-};
+  handleKeyPress = (event: KeyboardEvent) => {
+    this.setState({ symbol: event.key });
+  };
+
+  render() {
+    const { symbol } = this.state;
+
+    return (
+      <div className="App">
+        <p className="App__message">
+          {symbol === null
+            ? 'Nothing was pressed yet'
+            : `The last pressed key is [${symbol}]`}
+        </p>
+      </div>
+    );
+  }
+}
